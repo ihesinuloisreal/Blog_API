@@ -13,7 +13,6 @@ async function fetchDummyData() {
 
     const dummyDatas = response.data.posts;
     for (const dummyData of dummyDatas){
-
         const postData = {
             postId: dummyData["id"],
             postTitle: dummyData["title"],
@@ -26,8 +25,6 @@ async function fetchDummyData() {
 
 }
 
-
-
 async function savePost(postData: Partial<IPost> | UpdateQuery<IPost>) {
     await postDatabase.findOneAndUpdate(
         {
@@ -36,8 +33,19 @@ async function savePost(postData: Partial<IPost> | UpdateQuery<IPost>) {
             upsert: true,
         }
     )
-
     // const data = await fetchDummyData()
     console.log(postData)
 }
-export { fetchDummyData}
+
+async function loadDummyData() {
+    const initialPost = await postDatabase.findOne({
+        postId: 17,
+        postTitle: 'She was in a hurry.',
+    });
+    if(initialPost){
+        console.log("DAta already loaded")
+    } else {
+        await fetchDummyData()
+    }
+}
+export { loadDummyData}
