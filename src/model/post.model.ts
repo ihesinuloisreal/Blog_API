@@ -48,4 +48,27 @@ async function loadDummyData() {
         await fetchDummyData()
     }
 }
-export { loadDummyData}
+
+async function fetchAllPost() {
+    try {
+        const posts = await postDatabase.find();
+        return posts;
+    } catch (error) {
+        console.error("Error fetching posts:", error);
+    }
+}
+async function fetchByPostId(id:string) {
+    try {
+        const post = await postDatabase.findById(id);
+        if (post) {
+            console.log("Post found:", post);
+            // return post;
+        } else {
+            console.log("Post not found");
+        }
+    } catch (error) {
+        console.error("Error fetching post by ID:", error);
+    }
+}
+
+export { loadDummyData, fetchAllPost, fetchByPostId}
