@@ -100,7 +100,8 @@ async function createPost(postData: Partial<IPost> | UpdateQuery<IPost>) {
                 reactions: postData.reactions,
             }
             console.log(newNumber);
-            // await savePost(Data);
+            const result = await savePost(Data);
+            return result;
             // return Data;
         }
     } catch (error) {

@@ -1,5 +1,11 @@
 import { Request, Response } from "express";
-import { createPost, fetchAllPost, fetchByPostId, updatePost, deletePost } from "../model/post.model";
+import { 
+    createPost, 
+    fetchAllPost, 
+    fetchByPostId, 
+    updatePost, 
+    deletePost 
+} from "../model/post.model";
 
 export async function httpGetBlog(req:Request, res:Response){
     // Send a response to the client
@@ -34,7 +40,7 @@ export async function httpPostBlog(req:Request, res:Response){
 
     if (!data.postTitle && !data.postBody) {
         console.log("Please valid data")
-        return 
+        return res.status(400).json("Please valid data")
     }
     const response = await createPost(data);
     return res.status(201).json(response);
