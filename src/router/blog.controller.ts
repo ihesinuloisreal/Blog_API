@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createPost, fetchAllPost, fetchByPostId, updatePost } from "../model/post.model";
+import { createPost, fetchAllPost, fetchByPostId, updatePost, deletePost } from "../model/post.model";
 
 export async function httpGetBlog(req:Request, res:Response){
     // Send a response to the client
@@ -56,4 +56,20 @@ export async function httpUpdatePostBlog(req:Request, res:Response) {
         
     }
 
+}
+
+export async function httpDeletePost(req:Request, res:Response) {
+    const id = req.params.id;
+    try {
+        const postDetails = await deletePost(id);
+        if (postDetails == true) {
+            return res.status(200).json("Record deleted successfully");
+        } else {
+            return res.status(200).json("No record found");
+        }
+    } catch (error) {
+
+        console.error("Error while trying fetching post by ID:", error);
+        return error;
+    }
 }

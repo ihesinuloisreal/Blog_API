@@ -135,4 +135,13 @@ async function updatePost(postData: Partial<IPost> | UpdateQuery<IPost>, postId:
     }
 }
 
-export { loadDummyData, fetchAllPost, fetchByPostId, createPost, updatePost}
+async function deletePost(postId: string){
+    const result = await postDatabase.deleteOne({postId:postId});
+    if (result.deletedCount > 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+export { loadDummyData, fetchAllPost, fetchByPostId, createPost, updatePost, deletePost}
