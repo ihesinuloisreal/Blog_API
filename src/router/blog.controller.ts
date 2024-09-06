@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { createPost, fetchAllPost, fetchByPostId } from "../model/post.model";
+import { createPost, fetchAllPost, fetchByPostId, updatePost } from "../model/post.model";
 
 export async function httpGetBlog(req:Request, res:Response){
     // Send a response to the client
@@ -15,12 +15,14 @@ export async function httpGetBlog(req:Request, res:Response){
 export async function httpGetById(req:Request, res:Response){
     const id = req.params.id;
     try {
-        const post = fetchByPostId(id);
-        if (!post) {
-            return new Error("No post matching the id provided");
+        const postDetails = await fetchByPostId(id);
+        if (postDetails == false) {
+            return res.status(400).json("No record found");
+        } else {
+            return res.status(200).json(postDetails);
         }
-        return res.status(200).json(post);
     } catch (error) {
+
         console.error("Error fetching post by ID:", error);
         return error;
     }
@@ -36,5 +38,22 @@ export async function httpPostBlog(req:Request, res:Response){
     }
     const response = await createPost(data);
     return res.status(201).json(response);
+
+}
+
+export async function httpUpdatePostBlog(req:Request, res:Response) {
+    const id = req.params.id;
+    const data = req.body;
+    try {
+        const postDetails = await fetchByPostId(id);
+        if(!postDetails){
+            return "No record found"
+        } else {
+            const response = await updatePost(data, id);
+            return res.status(201).json(response)
+        }
+    } catch (error) {
+        
+    }
 
 }

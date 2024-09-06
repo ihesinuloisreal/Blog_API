@@ -14,7 +14,8 @@ async function fetchDummyData() {
     const dummyDatas = response.data.posts;
     for (const dummyData of dummyDatas){
         const postData = {
-            postId: dummyData["id"],
+            
+            postId: Number(dummyData["id"]),
             postTitle: dummyData["title"],
             postBody: dummyData["body"],
             tags: dummyData["tags"],
@@ -35,6 +36,17 @@ async function savePost(postData: Partial<IPost> | UpdateQuery<IPost>) {
     )
     // const data = await fetchDummyData()
     // console.log(postData)
+}
+async function update(postData: Partial<IPost> | UpdateQuery<IPost>) {
+    await postDatabase.findOneAndUpdate(
+        {
+            postId: postData.postId
+        },{ 
+            $set: postData 
+        },{
+            new: true
+        }
+    )
 }
 
 async function loadDummyData() {
@@ -57,14 +69,16 @@ async function fetchAllPost() {
         console.error("Error fetching posts:", error);
     }
 }
-async function fetchByPostId(id:string) {
+async function fetchByPostId(postId :string) {
+    const query = { postId: postId };
+    const options = {_id: 0, __v:0};
+    
     try {
-        const post = await postDatabase.findById(id);
+        const post = await postDatabase.findOne(query, options );
         if (post) {
-            console.log("Post found:", post);
-            // return post;
+            return post;
         } else {
-            console.log("Post not found");
+            return false;
         }
     } catch (error) {
         console.error("Error fetching post by ID:", error);
@@ -77,7 +91,7 @@ async function createPost(postData: Partial<IPost> | UpdateQuery<IPost>) {
             console.log("Please enter required field")
         } else {
             const latestNumber = await getLatestNumber();
-            const newNumber = Number(latestNumber.postId) + 1
+            const newNumber = Number(latestNumber) + 1
             const Data = {
                 postId: newNumber,
                 postTitle: postData.postTitle,
@@ -85,7 +99,7 @@ async function createPost(postData: Partial<IPost> | UpdateQuery<IPost>) {
                 tags: postData.tags,
                 reactions: postData.reactions,
             }
-            console.log(Data);
+            console.log(newNumber);
             // await savePost(Data);
             // return Data;
         }
@@ -95,12 +109,30 @@ async function createPost(postData: Partial<IPost> | UpdateQuery<IPost>) {
 }
 async function getLatestNumber(): Promise<any> {
     try {
-        return await postDatabase.findOne().sort('-postId');
+        const latestNumber = await postDatabase.findOne().sort('-postId');
+
+        return latestNumber?.postId;
       
     } catch (error) {
       console.error("Error fetching the latest number:", error);
       throw error;
     }
-  }
+}
 
-export { loadDummyData, fetchAllPost, fetchByPostId, createPost}
+async function updatePost(postData: Partial<IPost> | UpdateQuery<IPost>, postId: string){
+    try {
+        const Data = {
+            postId: postId,
+            postTitle: postData.postTitle,
+            postBody: postData.postBody,
+            // tags: postData.tags,
+            // reactions: postData.reactions,
+        }
+        const response = await update(Data);
+        return response;
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export { loadDummyData, fetchAllPost, fetchByPostId, createPost, updatePost}
