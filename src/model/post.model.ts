@@ -85,6 +85,16 @@ async function fetchByPostId(postId :string) {
     }
 }
 
+async function fetchByTag(tag:string){
+    return await postDatabase.find(
+        {
+            tags: tag
+        },{
+            _id: 0, __v:0
+        }
+    )
+}
+
 async function createPost(postData: Partial<IPost> | UpdateQuery<IPost>) {
     try {
         if(!postData){
@@ -145,4 +155,4 @@ async function deletePost(postId: string){
     }
 }
 
-export { loadDummyData, fetchAllPost, fetchByPostId, createPost, updatePost, deletePost}
+export { loadDummyData, fetchAllPost, fetchByPostId, createPost, updatePost, deletePost, fetchByTag}

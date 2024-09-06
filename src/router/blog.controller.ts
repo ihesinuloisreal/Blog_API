@@ -4,7 +4,8 @@ import {
     fetchAllPost, 
     fetchByPostId, 
     updatePost, 
-    deletePost 
+    deletePost,
+    fetchByTag
 } from "../model/post.model";
 
 export async function httpGetBlog(req:Request, res:Response){
@@ -78,4 +79,20 @@ export async function httpDeletePost(req:Request, res:Response) {
         console.error("Error while trying fetching post by ID:", error);
         return error;
     }
+}
+
+export async function httpGetByTag(req:Request, res:Response){
+    const tag = req.params.tag;
+    try {
+        const response = await fetchByTag(tag)
+        if (response.length === 0) {
+            return res.status(400).json(`No posts found with the specified tag: ${tag}.`);
+          } else {
+            // return res.status(200).json(`${response.length} posts found.`);
+            return res.status(200).json(response);
+          }
+    } catch (error) {
+        return new Error ("Error while fetching record");
+    }
+    
 }
